@@ -53,7 +53,7 @@
         text-decoration: underline;
       }
 
-      .article-list {
+      .post-list {
         list-style-type: none;
         padding: 0;
         margin: 0;
@@ -62,13 +62,13 @@
         gap: 20px;
       }
 
-      .article-item {
+      .post-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
 
-      .article-title {
+      .post-title {
         color: #2a2a2a;
         font-weight: bold;
         font-size: 18px;
@@ -79,7 +79,7 @@
           transform 0.2s ease;
       }
 
-      .article-title:hover {
+      .post-title:hover {
         color: #8fa0af;
         text-decoration: underline;
       }
@@ -108,10 +108,10 @@
         <h1>Personal Blog</h1>
         <a href="/new" class="add-btn">+ Add</a>
       </div>
-      <ul class="article-list">
+      <ul class="post-list">
         {{range .}}
-        <li class="article-item">
-          <a href="/article/{{.ID}}" class="article-title">{{.Title}}</a>
+        <li class="post-item">
+          <a href="/posts/{{.ID}}" class="post-title">{{.Title}}</a>
           <span class="action-btn">
             <a href="/edit/{{.ID}}">Edit</a>
             <form action="/delete/{{.ID}}">

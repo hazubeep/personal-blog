@@ -33,7 +33,7 @@
         letter-spacing: 0.5px;
       }
 
-      .article-list {
+      .post-list {
         list-style-type: none;
         padding: 0;
         margin: 0;
@@ -41,13 +41,13 @@
         flex-direction: column;
       }
 
-      .article-item {
+      .post-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
 
-      .article-title {
+      .post-title {
         color: #2a2a2a;
         font-weight: bold;
         font-size: 18px;
@@ -58,12 +58,12 @@
           transform 0.2s ease;
       }
 
-      .article-title:hover {
+      .post-title:hover {
         color: #8fa0af;
         text-decoration: underline;
       }
 
-      .article-date {
+      .post-date {
         color: #8fa0af;
         font-weight: bold;
         font-size: 15px;
@@ -73,11 +73,11 @@
   <body>
     <div class="card">
       <h1>Personal Blog</h1>
-      <ul class="article-list">
+      <ul class="post-list">
         {{range .}}
-        <li class="article-item">
-          <a href="/article/{{.ID}}" class="article-title">{{.Title}}</a>
-          <span class="article-date">
+        <li class="post-item">
+          <a href="/posts/{{.ID}}" class="post-title">{{.Title}}</a>
+          <span class="post-date">
             <p>{{.CreatedAt.Format "2006-01-02"}}</p>
           </span>
         </li>

@@ -2,32 +2,68 @@ package blog
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
 
-type Handler struct {
-	service *PostService
+type PostHandler struct {
+	service   *PostService
+	tmplCache map[string]*template.Template
 }
 
-func NewPostHandler(service *PostService) *Handler {
-	return &Handler{service: service}
+func NewPostHandler(service *PostService) *PostHandler {
+	cache := make(map[string]*template.Template)
+
+	pages := []string{
+		"home.html",
+		"admin.html",
+		"post.html",
+		"form.html",
+		"add-form.html",
+	}
+
+	for _, page := range pages {
+		ts, err := template.ParseFiles("templates/" + page)
+		if err != nil {
+			log.Fatalf("Error parsing template %s: %v", page, err)
+		}
+
+		cache[page] = ts
+	}
+
+	return &PostHandler{
+		service:   service,
+		tmplCache: cache,
+	}
 }
 
-func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
-	articles, err := h.service.Index()
+func (h *PostHandler) render(w http.ResponseWriter, page string, data any) {
+	tmpl, ok := h.tmplCache[page]
+	if !ok {
+		http.Error(w, "Template "+page+" not found in cache", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *PostHandler) Home(w http.ResponseWriter, r *http.Request) {
+	posts, err := h.service.Index()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/home.html"))
-	tmpl.Execute(w, articles)
+	h.render(w, "home.html", posts)
 }
 
-func (h *Handler) ShowPost(w http.ResponseWriter, r *http.Request) {
+func (h *PostHandler) ShowPost(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -35,34 +71,31 @@ func (h *Handler) ShowPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	article, err := h.service.Show(id)
+	posts, err := h.service.Show(id)
 	if err != nil {
-		http.Error(w, "Article not found", http.StatusNotFound)
+		http.Error(w, "Post not found", http.StatusNotFound)
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/article.html"))
-	tmpl.Execute(w, article)
+	h.render(w, "post.html", posts)
 }
 
 // Handler for private route
-func (h *Handler) HomeAdmin(w http.ResponseWriter, r *http.Request) {
-	articles, err := h.service.Index()
+func (h *PostHandler) HomeAdmin(w http.ResponseWriter, r *http.Request) {
+	posts, err := h.service.Index()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/admin.html"))
-	tmpl.Execute(w, articles)
+	h.render(w, "admin.html", posts)
 }
 
-func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
+func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		tmpl := template.Must(template.ParseFiles("templates/add-form.html"))
-		tmpl.Execute(w, nil)
+		h.render(w, "add-form.html", nil)
 	case http.MethodPost:
 		title := r.FormValue("title")
 		createdAt := r.FormValue("createdAt")
@@ -86,7 +119,7 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) EditPost(w http.ResponseWriter, r *http.Request) {
+func (h *PostHandler) EditPost(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -102,9 +135,7 @@ func (h *Handler) EditPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Type", "text/html")
-		tmpl := template.Must(template.ParseFiles("templates/form.html"))
-		tmpl.Execute(w, post)
+		h.render(w, "form.html", post)
 
 	case http.MethodPost:
 		title := r.FormValue("title")
@@ -129,7 +160,7 @@ func (h *Handler) EditPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) DeletePost(w http.ResponseWriter, r *http.Request) {
+func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

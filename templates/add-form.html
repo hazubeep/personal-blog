@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Update Article</title>
+    <title>Update Post</title>
     <style>
-      /* Menggunakan font modern yang mirip dengan gaya kasual di gambar */
       @import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
 
       * {
@@ -32,10 +31,9 @@
         width: 100%;
         max-width: 450px;
         padding: 30px 24px;
-        box-shadow: 6px 6px 0px #1a1a1a; /* Efek shadow ala komik/wireframe */
+        box-shadow: 6px 6px 0px #1a1a1a;
       }
 
-      /* Judul */
       h2 {
         font-size: 28px;
         color: #1a1a1a;
@@ -43,12 +41,10 @@
         font-weight: 700;
       }
 
-      /* Form Group */
       .form-group {
         margin-bottom: 16px;
       }
 
-      /* Input & Textarea */
       .form-control {
         width: 100%;
         padding: 12px 16px;
@@ -69,16 +65,14 @@
       textarea.form-control {
         height: 250px;
         resize: vertical;
-        font-weight: normal; /* Konten artikel biasanya menggunakan font reguler */
+        font-weight: normal;
       }
 
-      /* Efek Fokus pada Input */
       .form-control:focus {
         background-color: #f7f9fa;
         border-color: #007bff;
       }
 
-      /* Tombol Update */
       .btn-update {
         background-color: #ffffff;
         color: #1a1a1a;
@@ -93,7 +87,6 @@
         margin-top: 8px;
       }
 
-      /* Efek Hover & Active Tombol */
       .btn-update:hover {
         background-color: #f0f0f0;
         transform: translate(-1px, -1px);
@@ -108,7 +101,7 @@
   </head>
   <body>
     <div class="card-container">
-      <h2>Update Article</h2>
+      <h2>Update Post</h2>
 
       <form action="/new" method="POST">
         <div class="form-group">
@@ -116,7 +109,7 @@
             type="text"
             class="form-control"
             name="title"
-            placeholder="Article Title"
+            placeholder="Post Title"
             required
           />
         </div>

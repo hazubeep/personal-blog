@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Update Article</title>
+    <title>Update post</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap");
 
@@ -100,7 +100,7 @@
   </head>
   <body>
     <div class="card-container">
-      <h2>Update Article</h2>
+      <h2>Update Post</h2>
 
       <form action="/edit/{{.ID}}" method="POST">
         <div class="form-group">
@@ -108,7 +108,7 @@
             type="text"
             class="form-control"
             name="title"
-            placeholder="Article Title"
+            placeholder="Post Title"
             required
             value="{{.Title}}"
           />

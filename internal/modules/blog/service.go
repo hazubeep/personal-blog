@@ -2,7 +2,7 @@ package blog
 
 import (
 	"fmt"
-	"time"
+	"strings"
 )
 
 type PostService struct {
@@ -28,14 +28,14 @@ func (s *PostService) Show(id int) (*Post, error) {
 		return nil, err
 	}
 
-	for _, article := range posts {
-		if article.ID == id {
-			a := article
+	for _, post := range posts {
+		if post.ID == id {
+			a := post
 			return &a, nil
 		}
 	}
 
-	return nil, fmt.Errorf("Article with ID %d not found", id)
+	return nil, fmt.Errorf("Post with ID %d not found", id)
 }
 
 func (s *PostService) Create(post Post) error {
@@ -54,8 +54,8 @@ func (s *PostService) Create(post Post) error {
 	newPost := Post{
 		ID:        lastID + 1,
 		Title:     post.Title,
-		Content:   post.Content,
-		CreatedAt: time.Now(),
+		Content:   strings.TrimSpace(post.Content),
+		CreatedAt: post.CreatedAt,
 	}
 
 	posts = append(posts, newPost)
